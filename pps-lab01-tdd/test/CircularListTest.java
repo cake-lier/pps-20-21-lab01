@@ -32,18 +32,20 @@ public class CircularListTest {
     void testListIsInitiallyEmpty() {
         Assertions.assertEquals(0, list.size());
         Assertions.assertTrue(list.isEmpty());
+        Assertions.assertEquals(Optional.empty(), list.next());
+        Assertions.assertEquals(Optional.empty(), list.previous());
     }
 
     @Test
     void testGetNextElement() {
-        this.createListofTwoElements();
+        this.createListOfTwoElements();
         list.next();
         Assertions.assertEquals(Optional.of(SECOND_ELEMENT), list.next());
     }
 
     @Test
     void testNextWrapsAfterLastElement() {
-        this.createListofTwoElements();
+        this.createListOfTwoElements();
         list.next();
         list.next();
         Assertions.assertEquals(Optional.of(FIRST_ELEMENT), list.next());
@@ -51,18 +53,18 @@ public class CircularListTest {
 
     @Test
     void testGetPreviousElement() {
-        this.createListofTwoElements();
+        this.createListOfTwoElements();
         list.next();
         Assertions.assertEquals(Optional.of(FIRST_ELEMENT), list.previous());
     }
 
     @Test
     void testPreviousWrapsBeforeFirstElement() {
-        this.createListofTwoElements();
+        this.createListOfTwoElements();
         Assertions.assertEquals(Optional.of(SECOND_ELEMENT), list.previous());
     }
 
-    private void createListofTwoElements() {
+    private void createListOfTwoElements() {
         list.add(FIRST_ELEMENT);
         list.add(SECOND_ELEMENT);
     }

@@ -32,6 +32,9 @@ public class CircularListImpl implements CircularList {
 
     @Override
     public Optional<Integer> next() {
+        if (this.isEmpty()) {
+            return Optional.empty();
+        }
         final var currentElement = internalList.get(currentPosition);
         currentPosition++;
         if (currentPosition == internalList.size()) {
@@ -42,6 +45,9 @@ public class CircularListImpl implements CircularList {
 
     @Override
     public Optional<Integer> previous() {
+        if (this.isEmpty()) {
+            return Optional.empty();
+        }
         currentPosition--;
         if (currentPosition == FIRST_POSITION - 1) {
             currentPosition = internalList.size() - 1;
