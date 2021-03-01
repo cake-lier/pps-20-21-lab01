@@ -6,7 +6,6 @@ package lab01.example.model;
  * while the withdraw is allowed only if the balance greater or equal the withdrawal amount
  */
 public class SimpleBankAccount implements BankAccount {
-
     private double balance;
     private final AccountHolder holder;
 
@@ -14,6 +13,7 @@ public class SimpleBankAccount implements BankAccount {
         this.holder = holder;
         this.balance = balance;
     }
+
     @Override
     public AccountHolder getHolder(){
         return this.holder;
