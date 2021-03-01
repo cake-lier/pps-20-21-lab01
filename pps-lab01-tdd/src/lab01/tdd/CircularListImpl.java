@@ -31,6 +31,9 @@ public class CircularListImpl implements CircularList {
     @Override
     public Optional<Integer> next() {
         currentPosition++;
+        if (currentPosition == internalList.size()) {
+            currentPosition = 0;
+        }
         return Optional.of(internalList.get(currentPosition));
     }
 
