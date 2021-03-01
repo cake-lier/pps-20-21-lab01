@@ -121,4 +121,11 @@ public class CircularListTest {
         Assertions.assertEquals(generateSatisfyingElements(RANGE_END_DIVISOR_MULTIPLES, CHOSEN_DIVISOR),
                                 getSatisfyingElementsFromList(new MultipleOfStrategy(CHOSEN_DIVISOR)));
     }
+
+    @Test
+    void testNextWithEqualsStrategy() {
+        IntStream.iterate(1, i -> 1 - i).limit(6).forEach(list::add);
+        Assertions.assertEquals(IntStream.generate(() -> 0).limit(5).boxed().collect(Collectors.toList()),
+                                getSatisfyingElementsFromList(new EqualsStrategy(0)));
+    }
 }
