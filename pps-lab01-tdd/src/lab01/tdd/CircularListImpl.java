@@ -5,12 +5,14 @@ import java.util.List;
 import java.util.Optional;
 
 public class CircularListImpl implements CircularList {
+    private static final int FIRST_POSITION = 0;
+
     private final List<Integer> internalList;
     private int currentPosition;
 
     public CircularListImpl() {
         internalList = new ArrayList<>();
-        currentPosition = 0;
+        currentPosition = FIRST_POSITION;
     }
 
     @Override
@@ -33,7 +35,7 @@ public class CircularListImpl implements CircularList {
         final var currentElement = internalList.get(currentPosition);
         currentPosition++;
         if (currentPosition == internalList.size()) {
-            currentPosition = 0;
+            currentPosition = FIRST_POSITION;
         }
         return Optional.of(currentElement);
     }
@@ -41,7 +43,7 @@ public class CircularListImpl implements CircularList {
     @Override
     public Optional<Integer> previous() {
         currentPosition--;
-        if (currentPosition == -1) {
+        if (currentPosition == FIRST_POSITION - 1) {
             currentPosition = internalList.size() - 1;
         }
         final var currentElement = internalList.get(currentPosition);
