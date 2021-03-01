@@ -52,8 +52,7 @@ public class CircularListImpl implements CircularList {
         if (currentPosition == FIRST_POSITION - 1) {
             currentPosition = internalList.size() - 1;
         }
-        final var currentElement = internalList.get(currentPosition);
-        return Optional.of(currentElement);
+        return Optional.of(internalList.get(currentPosition));
     }
 
     @Override
