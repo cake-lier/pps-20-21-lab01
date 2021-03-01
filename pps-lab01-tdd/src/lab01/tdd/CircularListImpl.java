@@ -3,6 +3,7 @@ package lab01.tdd;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 public class CircularListImpl implements CircularList {
     private static final int FIRST_POSITION = 0;
@@ -61,7 +62,18 @@ public class CircularListImpl implements CircularList {
     }
 
     @Override
-    public Optional<Integer> next(SelectStrategy strategy) {
-        return Optional.empty();
+    public Optional<Integer> next(final SelectStrategy strategy) {
+        return IntStream.range(currentPosition, internalList.size())
+                        .filter(i -> strategy.apply(internalList.get(i)))
+                        .boxed()
+                        .findFirst()
+                        .map(i -> {
+                            final var currentElement = internalList.get(i);
+                            currentPosition = i + 1;
+                            if (currentPosition == internalList.size()) {
+                                currentPosition = FIRST_POSITION;
+                            }
+                            return currentElement;
+                        });
     }
 }

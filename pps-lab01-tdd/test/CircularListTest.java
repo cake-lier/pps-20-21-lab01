@@ -1,10 +1,14 @@
 import lab01.tdd.CircularList;
 import lab01.tdd.CircularListImpl;
+import lab01.tdd.EvenStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * The test suite for testing the CircularList implementation
@@ -78,6 +82,21 @@ public class CircularListTest {
         list.previous();
         list.reset();
         Assertions.assertEquals(Optional.of(SECOND_ELEMENT), list.previous());
+    }
+
+    @Test
+    void testNextWithEvenStrategy() {
+        IntStream.iterate(0, i -> i + 1).limit(5).forEach(list::add);
+        final var solution = IntStream.iterate(0, i -> (i + 2) % 6)
+                                                    .limit(5)
+                                                    .boxed()
+                                                    .collect(Collectors.toList());
+        final var evenElements = IntStream.range(0, 5)
+                                          .mapToObj(i -> list.next(new EvenStrategy()))
+                                          .filter(Optional::isPresent)
+                                          .map(Optional::get)
+                                          .collect(Collectors.toList());
+        Assertions.assertEquals(solution, evenElements);
     }
 
     private void createListOfTwoElements() {
