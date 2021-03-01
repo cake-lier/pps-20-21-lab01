@@ -11,6 +11,7 @@ import java.util.Optional;
  */
 public class CircularListTest {
     private static final int FIRST_ELEMENT = 0;
+    private static final int SECOND_ELEMENT = 1;
 
     public CircularList list;
 
@@ -36,17 +37,18 @@ public class CircularListTest {
     @Test
     void testGetNextElement() {
         list.add(FIRST_ELEMENT);
-        list.add(1);
+        list.add(SECOND_ELEMENT);
         list.next();
-        Assertions.assertEquals(Optional.of(1), list.next());
+        Assertions.assertEquals(Optional.of(SECOND_ELEMENT), list.next());
     }
 
     @Test
     void testNextWrapsAfterLastElement() {
         list.add(FIRST_ELEMENT);
-        list.add(1);
+        list.add(SECOND_ELEMENT);
         list.next();
         list.next();
         Assertions.assertEquals(Optional.of(FIRST_ELEMENT), list.next());
     }
+
 }
