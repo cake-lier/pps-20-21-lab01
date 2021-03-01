@@ -1,11 +1,11 @@
 import lab01.tdd.CircularList;
 import lab01.tdd.CircularListImpl;
 import lab01.tdd.EvenStrategy;
+import lab01.tdd.MultipleOfStrategy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -97,6 +97,21 @@ public class CircularListTest {
                                           .map(Optional::get)
                                           .collect(Collectors.toList());
         Assertions.assertEquals(solution, evenElements);
+    }
+
+    @Test
+    void testNextWithMultipleOfStrategy() {
+        IntStream.iterate(0, i -> i + 1).limit(7).forEach(list::add);
+        final var solution = IntStream.iterate(0, i -> (i + 3) % 9)
+                                                    .limit(5)
+                                                    .boxed()
+                                                    .collect(Collectors.toList());
+        final var multiplesOfThree = IntStream.range(0, 5)
+                                          .mapToObj(i -> list.next(new MultipleOfStrategy(3)))
+                                          .filter(Optional::isPresent)
+                                          .map(Optional::get)
+                                          .collect(Collectors.toList());
+        Assertions.assertEquals(solution, multiplesOfThree);
     }
 
     private void createListOfTwoElements() {
