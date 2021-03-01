@@ -33,15 +33,7 @@ public class CircularListImpl implements CircularList {
 
     @Override
     public Optional<Integer> next() {
-        if (isEmpty()) {
-            return Optional.empty();
-        }
-        final var currentElement = internalList.get(currentPosition);
-        currentPosition++;
-        if (currentPosition == internalList.size()) {
-            currentPosition = FIRST_POSITION;
-        }
-        return Optional.of(currentElement);
+        return isEmpty() ? Optional.empty() : Optional.of(getElementAtPositionAndIncrement(currentPosition));
     }
 
     @Override
@@ -67,13 +59,15 @@ public class CircularListImpl implements CircularList {
                         .filter(i -> strategy.apply(internalList.get(i)))
                         .boxed()
                         .findFirst()
-                        .map(i -> {
-                            final var currentElement = internalList.get(i);
-                            currentPosition = i + 1;
-                            if (currentPosition == internalList.size()) {
-                                currentPosition = FIRST_POSITION;
-                            }
-                            return currentElement;
-                        });
+                        .map(this::getElementAtPositionAndIncrement);
+    }
+
+    private int getElementAtPositionAndIncrement(final int position) {
+        final var currentElement = internalList.get(position);
+        currentPosition = position + 1;
+        if (currentPosition == internalList.size()) {
+            reset();
+        }
+        return currentElement;
     }
 }
