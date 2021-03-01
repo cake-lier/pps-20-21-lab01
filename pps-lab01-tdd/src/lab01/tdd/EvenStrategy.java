@@ -1,8 +1,7 @@
 package lab01.tdd;
 
-public class EvenStrategy implements SelectStrategy {
-    @Override
-    public boolean apply(final int element) {
-        return element % 2 == 0;
+public class EvenStrategy extends MultipleOfStrategy {
+    public EvenStrategy() {
+        super(2);
     }
 }
