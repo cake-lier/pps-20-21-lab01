@@ -26,4 +26,10 @@ public class CircularListTest {
         Assertions.assertEquals(1, list.size());
         Assertions.assertEquals(Optional.of(FIRST_ELEMENT), list.next());
     }
+
+    @Test
+    void testListIsInitiallyEmpty() {
+        Assertions.assertEquals(0, list.size());
+        Assertions.assertTrue(list.isEmpty());
+    }
 }
