@@ -10,7 +10,7 @@ public class CircularListImpl implements CircularList {
 
     public CircularListImpl() {
         internalList = new ArrayList<>();
-        currentPosition = -1;
+        currentPosition = 0;
     }
 
     @Override
@@ -30,16 +30,22 @@ public class CircularListImpl implements CircularList {
 
     @Override
     public Optional<Integer> next() {
+        final var currentElement = internalList.get(currentPosition);
         currentPosition++;
         if (currentPosition == internalList.size()) {
             currentPosition = 0;
         }
-        return Optional.of(internalList.get(currentPosition));
+        return Optional.of(currentElement);
     }
 
     @Override
     public Optional<Integer> previous() {
-        return Optional.empty();
+        currentPosition--;
+        if (currentPosition == -1) {
+            currentPosition = internalList.size() - 1;
+        }
+        final var currentElement = internalList.get(currentPosition);
+        return Optional.of(currentElement);
     }
 
     @Override
