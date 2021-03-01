@@ -9,29 +9,29 @@ public class CircularListImpl implements CircularList {
     private int currentPosition;
 
     public CircularListImpl() {
-        this.internalList = new ArrayList<>();
-        this.currentPosition = -1;
+        internalList = new ArrayList<>();
+        currentPosition = -1;
     }
 
     @Override
     public void add(final int element) {
-        this.internalList.add(element);
+        internalList.add(element);
     }
 
     @Override
     public int size() {
-        return this.internalList.size();
+        return internalList.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return this.internalList.isEmpty();
+        return internalList.isEmpty();
     }
 
     @Override
     public Optional<Integer> next() {
-        this.currentPosition++;
-        return Optional.of(this.internalList.get(this.currentPosition));
+        currentPosition++;
+        return Optional.of(internalList.get(currentPosition));
     }
 
     @Override
