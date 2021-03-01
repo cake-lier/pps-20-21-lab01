@@ -55,7 +55,8 @@ public class CircularListImpl implements CircularList {
 
     @Override
     public Optional<Integer> next(final SelectStrategy strategy) {
-        return IntStream.range(currentPosition, internalList.size())
+        return IntStream.concat(IntStream.range(currentPosition, internalList.size()),
+                                IntStream.range(FIRST_POSITION, currentPosition))
                         .filter(i -> strategy.apply(internalList.get(i)))
                         .boxed()
                         .findFirst()

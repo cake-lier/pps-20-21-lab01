@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.IntUnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -16,11 +17,14 @@ public class CircularListTest {
     private static final int SECOND_ELEMENT = 1;
     private static final int NUMBER_OF_SATISFYING_ELEMENTS = 5;
     public static final int FIRST_SATISFYING_ELEMENT = 0;
-    public static final int RANGE_START_EVEN_MULTIPLES = -1;
-    public static final int RANGE_END_EVEN_MULTIPLES = 5;
+    public static final int START_RANGE_EVEN_MULTIPLES = -1;
+    public static final int END_RANGE_EVEN_MULTIPLES = 5;
     public static final int CHOSEN_DIVISOR = 3;
-    public static final int RANGE_START_DIVISOR_MULTIPLES = -2;
-    public static final int RANGE_END_DIVISOR_MULTIPLES = 7;
+    public static final int START_RANGE_DIVISOR_MULTIPLES = -2;
+    public static final int END_RANGE_DIVISOR_MULTIPLES = 7;
+    public static final int START_SEQUENCE_EQUALS = 1;
+    public static final int SIZE_SEQUENCE_EQUALS = 7;
+    public static final int EQUALS_CHOSEN_VALUE = 0;
 
     public CircularList list;
 
@@ -45,21 +49,20 @@ public class CircularListTest {
         Assertions.assertEquals(Optional.empty(), list.previous());
     }
 
-    private void createListOfTwoElements() {
-        list.add(FIRST_ELEMENT);
-        list.add(SECOND_ELEMENT);
+    private void addAllToList(final IntStream elementsToAdd) {
+        elementsToAdd.forEach(list::add);
     }
 
     @Test
     void testGetNextElement() {
-        this.createListOfTwoElements();
+        addAllToList(IntStream.of(FIRST_ELEMENT, SECOND_ELEMENT));
         list.next();
         Assertions.assertEquals(Optional.of(SECOND_ELEMENT), list.next());
     }
 
     @Test
     void testNextWrapsAfterLastElement() {
-        this.createListOfTwoElements();
+        addAllToList(IntStream.of(FIRST_ELEMENT, SECOND_ELEMENT));
         list.next();
         list.next();
         Assertions.assertEquals(Optional.of(FIRST_ELEMENT), list.next());
@@ -67,20 +70,20 @@ public class CircularListTest {
 
     @Test
     void testGetPreviousElement() {
-        this.createListOfTwoElements();
+        addAllToList(IntStream.of(FIRST_ELEMENT, SECOND_ELEMENT));
         list.next();
         Assertions.assertEquals(Optional.of(FIRST_ELEMENT), list.previous());
     }
 
     @Test
     void testPreviousWrapsBeforeFirstElement() {
-        this.createListOfTwoElements();
+        addAllToList(IntStream.of(FIRST_ELEMENT, SECOND_ELEMENT));
         Assertions.assertEquals(Optional.of(SECOND_ELEMENT), list.previous());
     }
 
     @Test
     void testResetPositionAfterNext() {
-        this.createListOfTwoElements();
+        addAllToList(IntStream.of(FIRST_ELEMENT, SECOND_ELEMENT));
         list.next();
         list.reset();
         Assertions.assertEquals(Optional.of(FIRST_ELEMENT), list.next());
@@ -88,7 +91,7 @@ public class CircularListTest {
 
     @Test
     void testResetPositionAfterPrevious() {
-        this.createListOfTwoElements();
+        addAllToList(IntStream.of(FIRST_ELEMENT, SECOND_ELEMENT));
         list.previous();
         list.reset();
         Assertions.assertEquals(Optional.of(SECOND_ELEMENT), list.previous());
@@ -101,31 +104,35 @@ public class CircularListTest {
                         .collect(Collectors.toList());
     }
 
-    private List<Integer> generateSatisfyingElements(final int endRange, final int divisor) {
-        return IntStream.iterate(FIRST_SATISFYING_ELEMENT, i -> (i + divisor) % ((endRange / divisor + 1) * divisor))
+    private List<Integer> generateSatisfyingElements(final IntUnaryOperator generator) {
+        return IntStream.iterate(FIRST_SATISFYING_ELEMENT, generator)
                         .limit(NUMBER_OF_SATISFYING_ELEMENTS)
                         .boxed()
                         .collect(Collectors.toList());
     }
 
+    private List<Integer> generateRangeOfSatisfyingElements(final int endRange, final int divisor) {
+        return generateSatisfyingElements(i -> (i + divisor) % ((endRange / divisor + 1) * divisor));
+    }
+
     @Test
     void testNextWithEvenStrategy() {
-        IntStream.range(RANGE_START_EVEN_MULTIPLES, RANGE_END_EVEN_MULTIPLES).forEach(list::add);
-        Assertions.assertEquals(generateSatisfyingElements(RANGE_END_EVEN_MULTIPLES, 2),
+        addAllToList(IntStream.range(START_RANGE_EVEN_MULTIPLES, END_RANGE_EVEN_MULTIPLES));
+        Assertions.assertEquals(generateRangeOfSatisfyingElements(END_RANGE_EVEN_MULTIPLES, 2),
                                 getSatisfyingElementsFromList(new EvenStrategy()));
     }
 
     @Test
     void testNextWithMultipleOfStrategy() {
-        IntStream.range(RANGE_START_DIVISOR_MULTIPLES, RANGE_END_DIVISOR_MULTIPLES).forEach(list::add);
-        Assertions.assertEquals(generateSatisfyingElements(RANGE_END_DIVISOR_MULTIPLES, CHOSEN_DIVISOR),
+        addAllToList(IntStream.range(START_RANGE_DIVISOR_MULTIPLES, END_RANGE_DIVISOR_MULTIPLES));
+        Assertions.assertEquals(generateRangeOfSatisfyingElements(END_RANGE_DIVISOR_MULTIPLES, CHOSEN_DIVISOR),
                                 getSatisfyingElementsFromList(new MultipleOfStrategy(CHOSEN_DIVISOR)));
     }
 
     @Test
     void testNextWithEqualsStrategy() {
-        IntStream.iterate(1, i -> 1 - i).limit(6).forEach(list::add);
-        Assertions.assertEquals(IntStream.generate(() -> 0).limit(5).boxed().collect(Collectors.toList()),
-                                getSatisfyingElementsFromList(new EqualsStrategy(0)));
+        addAllToList(IntStream.iterate(START_SEQUENCE_EQUALS, i -> 1 - i).limit(SIZE_SEQUENCE_EQUALS));
+        Assertions.assertEquals(generateSatisfyingElements(i -> FIRST_SATISFYING_ELEMENT),
+                                getSatisfyingElementsFromList(new EqualsStrategy(EQUALS_CHOSEN_VALUE)));
     }
 }
