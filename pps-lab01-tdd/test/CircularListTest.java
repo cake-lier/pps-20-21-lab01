@@ -3,6 +3,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.IntUnaryOperator;
@@ -25,6 +26,8 @@ public class CircularListTest {
     public static final int START_SEQUENCE_EQUALS = 1;
     public static final int SIZE_SEQUENCE_EQUALS = 7;
     public static final int EQUALS_CHOSEN_VALUE = 0;
+    public static final int SIZE_SEQUENCE_WITHOUT_SATISFYING = 5;
+    public static final int NON_SATISFYING_EVEN_STRATEGY_ELEMENT = 1;
 
     private final SelectStrategyFactory selectStrategyFactory = new SelectStrategyFactoryImpl();
     private CircularList list;
@@ -48,6 +51,7 @@ public class CircularListTest {
         Assertions.assertTrue(list.isEmpty());
         Assertions.assertEquals(Optional.empty(), list.next());
         Assertions.assertEquals(Optional.empty(), list.previous());
+        Assertions.assertEquals(Optional.empty(), list.next(selectStrategyFactory.createEvenStrategy()));
     }
 
     private void addAllToList(final IntStream elementsToAdd) {
@@ -101,6 +105,7 @@ public class CircularListTest {
     private List<Integer> getSatisfyingElementsFromList(final SelectStrategy strategy) {
         return IntStream.range(0, NUMBER_OF_SATISFYING_ELEMENTS)
                         .mapToObj(i -> list.next(strategy))
+                        .filter(Optional::isPresent)
                         .map(Optional::get)
                         .collect(Collectors.toList());
     }
@@ -135,5 +140,12 @@ public class CircularListTest {
         addAllToList(IntStream.iterate(START_SEQUENCE_EQUALS, i -> 1 - i).limit(SIZE_SEQUENCE_EQUALS));
         Assertions.assertEquals(generateSatisfyingElements(i -> FIRST_SATISFYING_ELEMENT),
                                 getSatisfyingElementsFromList(selectStrategyFactory.createEqualsStrategy(EQUALS_CHOSEN_VALUE)));
+    }
+
+    @Test
+    void testNextWithStrategyWithoutSatisfyingElements() {
+        addAllToList(IntStream.generate(() -> NON_SATISFYING_EVEN_STRATEGY_ELEMENT).limit(SIZE_SEQUENCE_WITHOUT_SATISFYING));
+        Assertions.assertEquals(Collections.emptyList(),
+                                getSatisfyingElementsFromList(selectStrategyFactory.createEvenStrategy()));
     }
 }
