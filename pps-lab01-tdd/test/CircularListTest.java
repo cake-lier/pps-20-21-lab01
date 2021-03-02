@@ -26,7 +26,8 @@ public class CircularListTest {
     public static final int SIZE_SEQUENCE_EQUALS = 7;
     public static final int EQUALS_CHOSEN_VALUE = 0;
 
-    public CircularList list;
+    private final SelectStrategyFactory selectStrategyFactory = new SelectStrategyFactoryImpl();
+    private CircularList list;
 
     @BeforeEach
     void setUp() {
@@ -119,20 +120,20 @@ public class CircularListTest {
     void testNextWithEvenStrategy() {
         addAllToList(IntStream.range(START_RANGE_EVEN_MULTIPLES, END_RANGE_EVEN_MULTIPLES));
         Assertions.assertEquals(generateRangeOfSatisfyingElements(END_RANGE_EVEN_MULTIPLES, 2),
-                                getSatisfyingElementsFromList(new EvenStrategy()));
+                                getSatisfyingElementsFromList(selectStrategyFactory.createEvenStrategy()));
     }
 
     @Test
     void testNextWithMultipleOfStrategy() {
         addAllToList(IntStream.range(START_RANGE_DIVISOR_MULTIPLES, END_RANGE_DIVISOR_MULTIPLES));
         Assertions.assertEquals(generateRangeOfSatisfyingElements(END_RANGE_DIVISOR_MULTIPLES, CHOSEN_DIVISOR),
-                                getSatisfyingElementsFromList(new MultipleOfStrategy(CHOSEN_DIVISOR)));
+                                getSatisfyingElementsFromList(selectStrategyFactory.createMultipleOfStrategy(CHOSEN_DIVISOR)));
     }
 
     @Test
     void testNextWithEqualsStrategy() {
         addAllToList(IntStream.iterate(START_SEQUENCE_EQUALS, i -> 1 - i).limit(SIZE_SEQUENCE_EQUALS));
         Assertions.assertEquals(generateSatisfyingElements(i -> FIRST_SATISFYING_ELEMENT),
-                                getSatisfyingElementsFromList(new EqualsStrategy(EQUALS_CHOSEN_VALUE)));
+                                getSatisfyingElementsFromList(selectStrategyFactory.createEqualsStrategy(EQUALS_CHOSEN_VALUE)));
     }
 }
